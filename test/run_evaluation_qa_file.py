@@ -28,6 +28,12 @@ def parse_hotspot_file(file_data: List[Dict[str, Any]]) -> List[ExampleCase]:
 
 def parse_custom_qa_file(file_data: List[Dict[str, Any]]) -> List[ExampleCase]:
     example_cases = []
+
+    if len(file_data) > 0 and file_data[0].get('justification') is not None:
+        with open("test-files/fox/fox-docs.json", "r", encoding="utf-8") as f:
+            docs_data = json.load(f)
+            documents = [Document(text=doc['content'], metadata={'document_name': doc['title']}) for doc in docs_data]
+
     for i, dp in enumerate(file_data):
         example = Example(
             'QA' + str(i),
@@ -35,8 +41,14 @@ def parse_custom_qa_file(file_data: List[Dict[str, Any]]) -> List[ExampleCase]:
             dp.get('answer'),
         )
         agent_config = AgentConfig(
-            tools=[wikipedia_search, calculator, text_count]
+            tools=[calculator, text_count]
         )
+
+        if documents:
+            agent_config.tools.append(make_rag_for_documents(documents))
+        else:
+            agent_config.tools.append(wikipedia_search)
+
         example_cases.append(ExampleCase(example, agent_config))
     return example_cases
 
@@ -50,19 +62,19 @@ def _load_available_sets(folder_path: str) -> Dict[str, str]:
 
 @dataclass
 class TestInfo:
-    parse_fn: Callable[[Any], ExampleCase]
+    parse_fn: Callable[[Any], List[ExampleCase]]
     default_set: str
     available_sets: Dict[str, str]
 
 available_tests: Dict[str, TestInfo] = {
     'hotpot': TestInfo(parse_hotspot_file, 'train', {
         'train': 'test-files/hotpot/hotpot_train_v1.1_FIRST_1000.json'
-    }),
+    } | _load_available_sets('test-files/hotpot')),
     'qa': TestInfo(parse_custom_qa_file, '', _load_available_sets('test-files/custom-qa-sets')),
 }
 
 
-async def qa_file_test_fn(test_name: str, test_param: str|None, agent_constr: AgentContructor, llm: LLM, tracer: Tracer, talky: bool = True):
+async def qa_file_test_fn(test_name: str, test_param: str|None, agent_constr: AgentContructor, llm: LLM, tracer: Tracer, talky: bool = True, agent_name: str = ""):
     test = available_tests[test_name]
     param_splits = (test_param or "").split(':')
     set_name = at_or(param_splits, 0, test.default_set)
@@ -79,5 +91,6 @@ async def qa_file_test_fn(test_name: str, test_param: str|None, agent_constr: Ag
         if start_pos < 0 or start_pos >= len(data) or end_pos <= start_pos or end_pos > len(data):
             raise ValueError(f"invalid test range: got {start_pos} .. {end_pos}, available 0 .. {len(data)}")
         datapoints = parse_fn(data[start_pos:end_pos])
-        evaluation = await run_hotpotlike_examples(datapoints, agent_constr, tracer, llm, talky=talky)
+        evaluation = await run_hotpotlike_examples(datapoints, agent_constr, tracer, llm, talky=talky, evalRunCsv={'test': test_name, 'param':test_param, 'agent': agent_name})
+
         return evaluation

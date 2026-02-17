@@ -57,7 +57,11 @@ available_agents: Dict[str, AgentContructor] = {
     'llama-func': LlamaFunctionAgentWrapper,
 }
 available_llms: Dict[str, LLM] = {
+    'qwen2.5:3b-instruct-q4_K_M': LLM('qwen2.5:3b-instruct-q4_K_M'),
     'qwen2.5:7b-instruct-q8_0': LLM('qwen2.5:7b-instruct-q8_0'),
+    'qwen2.5:14b-instruct-q4_K_M': LLM('qwen2.5:14b-instruct-q4_K_M'),
+    'llama3.1:8b-instruct-q8_0': LLM('llama3.1:8b-instruct-q8_0'),
+    'deepseek-coder:6.7b-instruct': LLM('deepseek-coder:6.7b-instruct'),
 }
 
 def assert_arg(name: str, arg: str, availables: Dict[str, Any]):
@@ -79,8 +83,8 @@ def args_to_eval_runs(args_as_strings: List[str]|None = None) -> List[EvalRun]:
     runs: List[EvalRun] = []
 
     for test in as_list(args.tests):
-        for agent in as_list(args.agents):
-            for llm in as_list(args.llms):
+        for llm in as_list(args.llms):
+            for agent in as_list(args.agents):
                 test_param = "/".join(test.split('/')[1:])
                 runs.append(EvalRun(
                     test=test.split('/')[0],
@@ -99,7 +103,8 @@ csv_entries_run = ['version', 'formathash', 'eval_prog', 'eval_time_start',
                    'run_index', 'test', 'test_param', 'agent', 'llm']
 csv_entries_evaluation = ['nr_total', 'nr_finished', 'nr_failed', 
                'duration_total', 'duration_avg', 'duration_min', 'duration_max',
-               'em', 'f1', 'prec', 'recall']
+               'em', 'f1', 'prec', 'recall', 
+               'nr_task_avg', 'nr_toolrun_avg', 'nr_llmcall_avg', 'nr_retry_avg']
 csv_entries = csv_entries_run + csv_entries_evaluation
 h_blake2b_csv_entries = hashlib.blake2b(digest_size=8)
 h_blake2b_csv_entries.update('\0'.join(csv_entries).encode())
@@ -144,7 +149,7 @@ async def main_eval(runs: List[EvalRun], tracer: Tracer = ZeroTracer(), talky: b
         agent = available_agents[run.agent_name]
         llm = available_llms[run.llm]
 
-        evaluation = await test_fn(run.test, run.test_param, agent, llm, tracer, talky=talky)
+        evaluation = await test_fn(run.test, run.test_param, agent, llm, tracer, talky=talky, agent_name=run.agent_name)
         results.append({
             'i': i,
             'run': run,

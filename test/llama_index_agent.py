@@ -1,9 +1,10 @@
-from typing import List, Callable
+from typing import List, Callable, Any, Dict
 import asyncio
 from mlux_reactly import Tracer, ZeroTracer, Tool, LLM
 from llama_index.llms.ollama import Ollama
 from llama_index.core.agent import FunctionAgent, ReActAgent
 from llama_index.core.llms import LLM as LLamaLLM
+from llama_index.core.tools import FunctionTool
 
 
 default_llm = Ollama(
@@ -16,6 +17,19 @@ def make_ollama_llm(l: LLM|LLamaLLM) -> LLamaLLM:
     else:
         return Ollama(model=l.model)
 
+def convert_tools(tools: List[Tool | Callable[..., Any]]) -> List[Dict[str, Any]]:
+    llama_tools = []
+
+    for t in tools:
+        if isinstance(t, Tool):
+            func = t.run
+        elif callable(t):
+            func = t
+        else:
+            raise TypeError(f"Unsupported tool type: {type(t)}")
+        llama_tools.append(FunctionTool.from_defaults(func))
+    return llama_tools
+
 class LlamaFunctionAgentWrapper:
     agent: FunctionAgent
 
@@ -25,13 +39,15 @@ class LlamaFunctionAgentWrapper:
             tracer: Tracer = ZeroTracer(),
             llm: LLM|LLamaLLM = default_llm):
         self.agent = FunctionAgent(
-            tools=tools,
+            tools=convert_tools(tools),
             llm=make_ollama_llm(llm),
             #system_prompt="You are a helpful assistant that can multiply two numbers.",
         )
 
-    def query(self, user_question: str):
-        return str(self.agent.run(user_question))
+    async def query(self, user_question: str):
+        handler = self.agent.run(user_question)
+        answer = await handler
+        return str(answer)
 
 
 class LlamaReActAgentWrapper:
@@ -43,7 +59,7 @@ class LlamaReActAgentWrapper:
             tracer: Tracer = ZeroTracer(),
             llm: LLM|LLamaLLM = default_llm):
         self.agent = ReActAgent(
-            tools=tools,
+            tools=convert_tools(tools),
             llm=make_ollama_llm(llm),
             #system_prompt="You are a helpful assistant that can multiply two numbers.",
         )
