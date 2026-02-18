@@ -1,0 +1,123 @@
+[
+  {
+    "_id": "c1_aether_shield",
+    "question": "What is the absolute difference between the total allocation for Project Aether and the maximum coverage amount of Policy #CS-901-B?",
+    "answer": "$3549400",
+    "justification": "Policy: 5,000,000 - Project: 1,450,600"
+  },
+  {
+    "_id": "c2_vanguard_chars",
+    "question": "How many characters (including spaces/hyphens) are in the name of the city where Vanguard flight VNG-402 departs from?",
+    "answer": "9",
+    "justification": "Retrieve 'Vanguard Logistics Flight 402' -> 'Neo-Tokyo' -> TextCount on 'Neo-Tokyo'"
+  },
+  {
+    "_id": "c3_greenleaf_payroll",
+    "question": "If GreenLeaf Wellness Clinic pays each of its registered nurses a flat daily rate of $152, what is the total daily payroll for all nurses at that clinic?",
+    "answer": "$2128",
+    "justification": "Retrieve 'GreenLeaf Clinic Staffing' (14 nurses) -> 152 * 14"
+  },
+  {
+    "_id": "c4_weight_comparison",
+    "question": "What is the combined weight in lbs of the payload carried by Atlas Truck #88 and the total silicon wafers on Vanguard flight VNG-402? (1 ton = 2000 lbs)",
+    "answer": "137500 lbs",
+    "justification": "Atlas payload: 47,500 lbs + Vanguard: 45 metric tons (Agent must handle unit conversion or specify sum of 47,500 lbs and 45 tons)"
+  },
+  {
+    "_id": "c5_staff_v_guards",
+    "question": "What is the result of multiplying the number of practitioners at GreenLeaf Wellness Clinic by the number of guards on the Iron-Clad night shift?",
+    "answer": "24",
+    "justification": "6 practitioners * 4 guards = 24"
+  },
+  {
+    "_id": "c6_inventory_value",
+    "question": "What is the total revenue if Marlowe's Rare Books sells all its 18th-century editions for the price of a single Tiberius Gym 'Gold' monthly membership?",
+    "answer": "$4005",
+    "justification": "89 books * $45 = 4005"
+  },
+  {
+    "_id": "c7_flight_bus_diff",
+    "question": "How many more minutes does Vanguard flight VNG-402 take to reach its destination than a full loop on Bus Route 12?",
+    "answer": "495",
+    "justification": "Flight: 570 mins - Bus: 75 mins = 495"
+  },
+  {
+    "_id": "c8_server_ram_total",
+    "question": "What is the total RAM in GB of all servers located in Rack Row J-12 if each had the same RAM as a Vortex-12 node?",
+    "answer": "2880",
+    "justification": "45 servers * 64GB = 2880"
+  },
+  {
+    "_id": "c9_code_bug_ratio",
+    "question": "What is the total number of Python lines in Project Neon divided by the number of unresolved critical bugs in that same project?",
+    "answer": "345.24",
+    "justification": "14,500 / 42 = 345.23"
+  },
+  {
+    "_id": "c10_insurance_deductible",
+    "question": "How many monthly 'Silver' memberships at Tiberius Athletics would be needed to pay off the deductible for Policy #CS-901-B exactly?",
+    "answer": "1666.67",
+    "justification": "50,000 / 30 = 1666.67"
+  },
+
+  {
+    "_id": "c11",
+    "question": "There is a gym called something like 'T... Athletics'. How many characters does this full name have?",
+    "answer": "18",
+    "justification": "Tiberius Athletics"
+  },
+  {
+    "_id": "c12",
+    "question": "With the money paid for one of the 7 paintings bought from The Obsidian Gallery, about how many adult tickes can be bought from 'Stellaris Cinema'?",
+    "answer": "566",
+    "justification": "8,500 per painting, adult tickets 15$"
+  },
+  {
+    "_id": "c13_drones",
+    "question": "Yes or No, the AD-4 drone can carry more or weight than the weight of the magnetometer of the Alpha-1 probe?",
+    "answer": "No",
+    "justification": "magnetometer 3kg, drone 1.2kg"
+  },
+  {
+    "_id": "c14units",
+    "question": "How many more functional units does the latest batch of Nova-Core chips yield than units of Part-B contained in 'Container TR-8821'?",
+    "answer": "6",
+    "justification": "850 units of Part-B, 856 functional units"
+  },
+  {
+    "_id": "c15",
+    "question": "How many average sized files of the 'Zenith repository' can the empty SSD of the camera store which sensor captures 8,192 by 5,460 pixel images (assume 1 GB = 1048576 KB)?",
+    "answer": "11184810",
+    "justification": "average file size is 12KB, 128GB card"
+  },
+  {
+    "_id": "c16",
+    "question": "What is the ratio between the ceiling height of the Titan-X logistics hub and the Northern-Star Telescope aperture (i.e. height/aperture)?",
+    "answer": "4.8",
+    "justification": "ceiling height is 12 meters, aperture is 2.5 meters"
+  },
+  {
+    "_id": "c17kwh",
+    "question": "How many times did Turbine #4 generated kWh yesterday than the solar array produced on Monday",
+    "answer": "100",
+    "justification": "Turbine #4 generated 4,500 kWh yesterday, solar array produced 45kWh on Monday"
+  },
+  {
+    "_id": "c18hangar",
+    "question": "What is the name of the paint for the exterior of the hangar?",
+    "answer": "Arctic White",
+    "justification": ""
+  },
+  {
+    "_id": "c19",
+    "question": "What is heavier, the sand for one cubic yard of concrete or the shipment of copper pipes?",
+    "answer": "copper pipes",
+    "justification": "total weight of the copper pipes is 1,500 lbs, 1,200 lbs of sand"
+  },
+  {
+    "_id": "c20hotel",
+    "question": "The hotel has 2 more floors than the gallons of water the Blue-Ridge Ranch uses per day. What is the name of the hotel?",
+    "answer": "Grand-Vista North",
+    "justification": ""
+  }
+]
